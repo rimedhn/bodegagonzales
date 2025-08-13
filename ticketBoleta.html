@@ -226,10 +226,19 @@
 
       <div align="center">--------------------------------------------------------</div>
       <table>
-        
+        <b>
         <tr>
           <td class="detail">Total venta:</td>
           <td class="detail1">L<span id="total"></span></td>
+        </tr>
+        </b>
+        <tr>
+          <td class="detail">Pago Recibido:</td>
+          <td class="detail1">L<span id="recibido"></span></td>
+        </tr>
+        <tr>
+          <td class="detail">Saldo:</td>
+          <td class="detail1">L<span id="saldo"></span></td>
         </tr>
         
       </table>
@@ -279,6 +288,8 @@
       setTextContent("direccioncliente", getUrlParameter("direccioncliente"));
       setTextContent("telefonocliente", getUrlParameter("telefonocliente"));
       setTextContent("total", getUrlParameter("total"));
+      setTextContent("recibido", getUrlParameter("recibido"));
+      setTextContent("saldo", getUrlParameter("saldo"));
 
       // Populate product table
       var descriptions = getUrlParameter("descriptions").split(",");
