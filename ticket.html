@@ -313,12 +313,12 @@
           <td class="detail1">L<span id="total"></span></td>
         </tr>
         <tr>
-          <td class="detail">Recibido:</td>
+          <td class="detail">Pago Recibido:</td>
           <td class="detail1">L<span id="recibido"></span></td>
         </tr>
         <tr>
-          <td class="detail">Cambio:</td>
-          <td class="detail1">L<span id="cambio"></span></td>
+          <td class="detail">Saldo:</td>
+          <td class="detail1">L<span id="saldo"></span></td>
         </tr>
       </table>
 
@@ -399,7 +399,7 @@
       setTextContent("isv18", getUrlParameter("isv18"));
       setTextContent("total", getUrlParameter("total"));
       setTextContent("recibido", getUrlParameter("recibido"));
-      setTextContent("cambio", getUrlParameter("cambio"));
+      setTextContent("saldo", getUrlParameter("saldo"));
 
       // Populate product table
       var descriptions = getUrlParameter("descriptions").split(",");
