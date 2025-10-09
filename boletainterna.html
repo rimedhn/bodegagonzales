@@ -4,125 +4,51 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=80mm, initial-scale=1.0"/>
     <title>BOLETA DE VENTA</title>
-    <link rel="icon" href="https://github.com/rimedhn/bodegagonzales/blob/main/WhatsApp%20Image%202025-05-24%20at%201.53.15%20PM.jpeg?raw=true" type="image/x-icon">
     <style>
       @media print {
-        body {
-          margin: 0;
-          padding: 0;
-          -webkit-print-color-adjust: exact;
-          color-adjust: exact;
-        }
-        @page {
-          size: 80mm auto;
-          margin: 5mm 2.5mm 5mm 2.5mm;
-          scale: 100;
-        }
-        #thermal-pos {
-          width: 80mm !important;
-          max-width: 80mm !important;
-          margin: 0 !important;
-        }
+        body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; color-adjust: exact; }
+        @page { size: 80mm auto; margin: 5mm 2.5mm 5mm 2.5mm; scale: 100; }
+        #thermal-pos { width: 80mm !important; max-width: 80mm !important; margin: 0 !important; }
       }
       body { margin: 0; padding: 0; background: #fff; }
-      #thermal-pos {
-        box-shadow: 0 0 0mm #eee;
-        margin: 0mm;
-        max-width: 80mm;
-        line-height: 4mm;
-        font-family: Arial, sans-serif;
-      }
+      #thermal-pos { font-family: Arial, sans-serif; max-width: 80mm; line-height: 4mm; }
       #thermal-pos h2 { font-size: 4mm; line-height: 13px; }
-      #thermal-pos .label {
-        text-align: center;
-        font-size: 5mm;
-        line-height: 1.3;
-      }
-      #thermal-pos .informasi {
-        vertical-align: text-top;
-        text-align: left;
-        max-width: 45mm;
-        word-wrap: break-word;
-      }
-      #thermal-pos .listitem {
-        font-size: 4mm;
-        text-align: center;
-      }
-      #thermal-pos table {
-        width: 100%;
-        table-layout: fixed;
-      }
-      #thermal-pos .item, #thermal-pos .amount, #thermal-pos .price, #thermal-pos .desc, #thermal-pos .qty, #thermal-pos .Isv {
-        font-size: 4.2mm;
-      }
+      #thermal-pos .label { text-align: center; font-size: 5mm; line-height: 1.3; }
+      #thermal-pos .informasi { vertical-align: text-top; text-align: left; max-width: 45mm; word-wrap: break-word; }
+      #thermal-pos .listitem { font-size: 4mm; text-align: center; }
+      #thermal-pos table { width: 100%; table-layout: fixed; }
+      #thermal-pos .item, #thermal-pos .amount, #thermal-pos .price, #thermal-pos .desc, #thermal-pos .qty, #thermal-pos .Isv { font-size: 4.2mm; }
       #thermal-pos .amount { text-align: right; }
       #thermal-pos .price, #thermal-pos .desc, #thermal-pos .qty, #thermal-pos .Isv { text-align: center; }
-      #thermal-pos .bawah, #thermal-pos .detail, #thermal-pos .detail1 {
-        margin-top: 5mm;
-        text-align: center;
-        page-break-after: auto;
-      }
       #thermal-pos .detail { text-align: left; }
       #thermal-pos .detail1 { text-align: right; }
-      .mi-imagen { width: 150px; height: 150px; }
-      #thermal-pos .listitem td { width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      #thermal-pos .descriptions {
-        width: 100%;
-        text-align: left;
-        font-weight: bold;
-        padding-top: 1px;
-        padding-bottom: 1px;
-      }
-      #thermal-pos .listitem .qty { width: 15%; text-align: left; }
-      #thermal-pos .listitem .Price, #thermal-pos .listitem .Desc, #thermal-pos .listitem .Isv { width: 20%; text-align: center; }
-      #thermal-pos .listitem .Amount { width: 25%; text-align: right; }
+      #thermal-pos .descriptions { width: 100%; text-align: left; font-weight: bold; padding-top: 1px; padding-bottom: 1px; }
     </style>
   </head>
   <body>
     <div id="thermal-pos">
       <div class="label">
         <b>BODEGA GONZALES</b><br />
-        <b></b>
-        <div class="label">
-          <b>RTN: 18011993004982</b><br />
-        </div>
+        <div class="label"><b>RTN: 18011993004982</b><br /></div>
         <div class="label">Direccion: Barrio Potreritos, 5ta calle frente a Casol<br /></div>
         <div class="label">Telefono: 9255-6823<br /></div>
-        <div class="label" id="email">bodegagonzales77@gmail.com<br /></div>
+        <div class="label">bodegagonzales77@gmail.com<br /></div>
       </div>
       <div align="center">--------------------------------------------------------</div>
       <div align="center" id="tipodoc"></div>
       <div align="center">--------------------------------------------------------</div>
       <table>
-        <tr>
-          <td class="informasi" style="width: 30%;">FOLIO:</td>
-          <td class="informasi" style="width: 70%;" id="folio"></td>
-        </tr>
-        <tr>
-          <td class="informasi" style="width: 30%;">FECHA:</td>
-          <td class="informasi" style="width: 70%;" id="fecha"></td>
-        </tr>
+        <tr><td class="informasi" style="width: 30%;">FOLIO:</td><td class="informasi" style="width: 70%;" id="folio"></td></tr>
+        <tr><td class="informasi" style="width: 30%;">FECHA:</td><td class="informasi" style="width: 70%;" id="fecha"></td></tr>
       </table>
       <div align="center">--------------------------------------------------------</div>
       <div align="center">Datos del cliente</div>
       <div align="center">--------------------------------------------------------</div>
       <table>
-        <tr>
-          <td class="informasi" style="width: 30%;">Cliente:</td>
-          <td class="informasi" style="width: 70%;" id="cliente"></td>
-        </tr>
-        <tr>
-          <td class="informasi" style="width: 30%;">RTN:</td>
-          <td class="informasi" style="width: 70%;" id="rtncliente"></td>
-        </tr>
-        <tr>
-          <td class="informasi" style="width: 30%;">Direccion:</td>
-          <td class="informasi" style="width: 70%;" id="direccioncliente"></td>
-        </tr>
-        <tr>
-          <td class="informasi" style="width: 30%;">Telefono:</td>
-          <td class="informasi" style="width: 70%;" id="telefonocliente"></td>
-        </tr>
+        <tr><td class="informasi" style="width: 30%;">Cliente:</td><td class="informasi" style="width: 70%;" id="cliente"></td></tr>
+        <tr><td class="informasi" style="width: 30%;">RTN:</td><td class="informasi" style="width: 70%;" id="rtncliente"></td></tr>
+        <tr><td class="informasi" style="width: 30%;">Direccion:</td><td class="informasi" style="width: 70%;" id="direccioncliente"></td></tr>
+        <tr><td class="informasi" style="width: 30%;">Telefono:</td><td class="informasi" style="width: 70%;" id="telefonocliente"></td></tr>
       </table>
       <div align="center">--------------------------------------------------------</div>
       <div align="center">Detalle</div>
@@ -140,24 +66,10 @@
       <table id="productTable"></table>
       <div align="center">--------------------------------------------------------</div>
       <table>
-        <b>
-        <tr>
-          <td class="detail">Total venta:</td>
-          <td class="detail1">L<span id="total"></span></td>
-        </tr>
-        </b>
-        <tr>
-          <td class="detail">Pago Recibido:</td>
-          <td class="detail1">L<span id="recibido"></span></td>
-        </tr>
-        <tr>
-          <td class="detail">Cambio:</td>
-          <td class="detail1">L<span id="cambio"></span></td>
-        </tr>
-        <tr>
-          <td class="detail">Saldo:</td>
-          <td class="detail1">L<span id="saldo"></span></td>
-        </tr>
+        <tr><td class="detail">Total venta:</td><td class="detail1">L<span id="total"></span></td></tr>
+        <tr><td class="detail">Pago Recibido:</td><td class="detail1">L<span id="recibido"></span></td></tr>
+        <tr><td class="detail">Cambio:</td><td class="detail1">L<span id="cambio"></span></td></tr>
+        <tr><td class="detail">Saldo:</td><td class="detail1">L<span id="saldo"></span></td></tr>
       </table>
       <div align="center">--------------------------------------------------------</div>
       <div id="montoLetras" style="text-align: center"></div>
@@ -165,10 +77,9 @@
       <div align="center">Gracias por su preferencia!!</div>
       <div align="center">Original: Cliente, Copia: Emisor</div>
       <div align="center">--------------------------------------------------------</div>
-      <div align="center">--------------------------------------------------------</div>
     </div>
+    <pre id="debug" style="color:red; font-size:10px"></pre>
     <script>
-      // IDs de las hojas
       const VENTAS_ID = "1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs";
       const VENTA_ID = "1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs";
       const SHEETS_BASE = "https://docs.google.com/spreadsheets/d/";
@@ -181,7 +92,6 @@
         num = parseFloat(num || 0);
         return num.toLocaleString('es-HN', {minimumFractionDigits:2, maximumFractionDigits:2});
       }
-      // Lógica para consultar los datos
       async function getSheetJson(sheetId, gid = 0) {
         const url = `${SHEETS_BASE}${sheetId}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
         const res = await fetch(url);
@@ -194,7 +104,6 @@
           return obj;
         });
       }
-      // Número a letras con centavos
       function montoALetras(monto) {
         monto = parseFloat(monto || 0);
         const entero = Math.floor(monto);
@@ -241,66 +150,66 @@
         }
         return resultado.trim();
       }
-      // Rellena los datos en el ticket
       async function main() {
         const no_venta = getParam("no_venta");
         if (!no_venta) {
-          alert("Falta el parámetro no_venta en la URL.");
-          return;
+          alert("Falta el parámetro no_venta en la URL."); return;
         }
-        // Consulta ambas hojas
-        let ventas = await getSheetJson(VENTAS_ID);
-        let ventaDetalles = await getSheetJson(VENTA_ID);
-        // Busca la venta principal
-        let v = ventas.find(row => row["No Venta"] == no_venta || row["NoVenta"] == no_venta);
-        // Busca los detalles
-        let productos = ventaDetalles.filter(row => row["No Venta"] == no_venta || row["NoVenta"] == no_venta);
-        // Si no hay venta, deja los campos vacíos pero no rompe
-        document.getElementById("tipodoc").textContent = v?.["TipoDoc"] || v?.["Tipo"] || "VENTA";
-        document.getElementById("folio").textContent = v?.["Folio 1"] || v?.["Folio"] || v?.["Factura"] || v?.["No Venta"] || no_venta;
-        document.getElementById("fecha").textContent = v?.["Fecha hora"] || v?.["Fecha"] || "";
-        // Datos cliente
-        document.getElementById("cliente").textContent = v?.["NombreCliente"] || v?.["Cliente"] || "";
-        document.getElementById("rtncliente").textContent = v?.["RTN Cliente"] || v?.["RTN"] || "";
-        document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || v?.["Direccion"] || "";
-        document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
-        // Totales
-        document.getElementById("total").textContent = formatCurrency(v?.["Monto"] || v?.["Total"] || v?.["total"] || v?.["Monto total"] || v?.["Monto Total"] || v?.["MontoVenta"] || v?.["totalventa"] || v?.["Monto Venta"] || 0);
-        document.getElementById("recibido").textContent = formatCurrency(v?.["Recibido"] || v?.["Efectivo recibido"] || v?.["Abono"] || 0);
-        document.getElementById("cambio").textContent = formatCurrency(v?.["Cambio"] || 0);
-        document.getElementById("saldo").textContent = formatCurrency(v?.["Saldo"] || 0);
-        // Renderiza productos
-        var productTable = document.getElementById("productTable");
-        productTable.innerHTML = "";
-        productos.forEach(function(p) {
-          let descripcion = p?.["Descripcion"] || p?.["Producto"] || "";
-          let cantidad = formatCurrency(p?.["Cantidad"] || 0);
-          let precio = formatCurrency(p?.["Precio"] || 0);
-          let descprod = formatCurrency(p?.["Descuento Lps"] || p?.["Descuento"] || p?.["Descuento %"] || 0);
-          let isv = formatCurrency(p?.["Isv"] || p?.["Impuesto"] || 0);
-          let monto = formatCurrency(p?.["Monto"] || 0);
-
-          // Fila de descripción
-          var descriptionRow = productTable.insertRow();
-          descriptionRow.innerHTML = `<td colspan="5" class="descriptions">${descripcion}</td>`;
-
-          // Fila de datos
-          var detailsRow = productTable.insertRow();
-          detailsRow.innerHTML = `
-            <td class="qty">${cantidad}</td>
-            <td class="Price">${precio}</td>
-            <td class="Desc">${descprod}</td>
-            <td class="Isv">${isv}</td>
-            <td class="Amount">${monto}</td>
-          `;
-          detailsRow.className = "listitem";
-        });
-        // Monto en letras
-        let totalMonto = v?.["Monto"] || v?.["Total"] || v?.["total"] || v?.["Monto total"] || v?.["Monto Total"] || v?.["MontoVenta"] || v?.["totalventa"] || v?.["Monto Venta"] || 0;
-        document.getElementById("montoLetras").textContent = "SON " + montoALetras(totalMonto);
-
-        // Imprimir automáticamente
-        setTimeout(()=>window.print(), 500);
+        let debug = "";
+        try {
+          let ventas = await getSheetJson(VENTAS_ID);
+          let ventaDetalles = await getSheetJson(VENTA_ID);
+          debug += "Ventas: " + ventas.length + " filas\n";
+          debug += "Venta Detalle: " + ventaDetalles.length + " filas\n";
+          let v = ventas.find(row => String(row["No Venta"]).trim() == String(no_venta).trim());
+          debug += "Venta encontrada: " + JSON.stringify(v) + "\n";
+          let productos = ventaDetalles.filter(row => String(row["No Venta"]).trim() == String(no_venta).trim());
+          debug += "Productos encontrados: " + productos.length + "\n";
+          // Si no hay venta, deja los campos vacíos pero no rompe
+          document.getElementById("tipodoc").textContent = v?.["Tipo"] || "VENTA";
+          document.getElementById("folio").textContent = v?.["No Venta"] || no_venta;
+          document.getElementById("fecha").textContent = v?.["Fecha"] || "";
+          // Datos cliente
+          document.getElementById("cliente").textContent = v?.["NombreCliente"] || "";
+          document.getElementById("rtncliente").textContent = v?.["RTN"] || "";
+          document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
+          document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
+          // Totales
+          document.getElementById("total").textContent = formatCurrency(v?.["Monto"] || 0);
+          document.getElementById("recibido").textContent = formatCurrency(v?.["Efectivo recibido"] || v?.["Abono"] || 0);
+          document.getElementById("cambio").textContent = formatCurrency(v?.["Cambio"] || 0);
+          document.getElementById("saldo").textContent = formatCurrency(v?.["Saldo"] || 0);
+          // Renderiza productos
+          var productTable = document.getElementById("productTable");
+          productTable.innerHTML = "";
+          productos.forEach(function(p) {
+            let descripcion = p?.["Descripcion"] || p?.["Producto"] || "";
+            let cantidad = formatCurrency(p?.["Cantidad"] || 0);
+            let precio = formatCurrency(p?.["Precio"] || 0);
+            let descprod = formatCurrency(p?.["Descuento Lps"] || p?.["Descuento %"] || 0);
+            let isv = formatCurrency(p?.["Isv"] || p?.["Impuesto"] || 0);
+            let monto = formatCurrency(p?.["Monto"] || 0);
+            // Fila de descripción
+            var descriptionRow = productTable.insertRow();
+            descriptionRow.innerHTML = `<td colspan="5" class="descriptions">${descripcion}</td>`;
+            // Fila de datos
+            var detailsRow = productTable.insertRow();
+            detailsRow.innerHTML = `
+              <td class="qty">${cantidad}</td>
+              <td class="Price">${precio}</td>
+              <td class="Desc">${descprod}</td>
+              <td class="Isv">${isv}</td>
+              <td class="Amount">${monto}</td>
+            `;
+            detailsRow.className = "listitem";
+          });
+          let totalMonto = v?.["Monto"] || 0;
+          document.getElementById("montoLetras").textContent = "SON " + montoALetras(totalMonto);
+        } catch(e) {
+          debug += "ERROR: " + e + "\n";
+        }
+        document.getElementById("debug").textContent = debug;
+        //setTimeout(()=>window.print(), 500);
       }
       window.onload = main;
     </script>
