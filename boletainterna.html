@@ -78,10 +78,9 @@
       <div align="center">Original: Cliente, Copia: Emisor</div>
       <div align="center">--------------------------------------------------------</div>
     </div>
-    <pre id="debug" style="color:red; font-size:10px"></pre>
     <script>
       const VENTAS_ID = "1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs";
-      const VENTA_ID = "1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs";
+      const VENTA_ID = "1q9z92BMUAxjsiO5AnACeur6wJhVpfIUkqT62erIUUOA";
       const SHEETS_BASE = "https://docs.google.com/spreadsheets/d/";
 
       function getParam(name) {
@@ -151,65 +150,47 @@
         return resultado.trim();
       }
       async function main() {
-        const no_venta = getParam("no_venta");
-        if (!no_venta) {
-          alert("Falta el parámetro no_venta en la URL."); return;
-        }
-        let debug = "";
-        try {
-          let ventas = await getSheetJson(VENTAS_ID);
-          let ventaDetalles = await getSheetJson(VENTA_ID);
-          debug += "Ventas: " + ventas.length + " filas\n";
-          debug += "Venta Detalle: " + ventaDetalles.length + " filas\n";
-          let v = ventas.find(row => String(row["No Venta"]).trim() == String(no_venta).trim());
-          debug += "Venta encontrada: " + JSON.stringify(v) + "\n";
-          let productos = ventaDetalles.filter(row => String(row["No Venta"]).trim() == String(no_venta).trim());
-          debug += "Productos encontrados: " + productos.length + "\n";
-          // Si no hay venta, deja los campos vacíos pero no rompe
-          document.getElementById("tipodoc").textContent = v?.["Tipo"] || "VENTA";
-          document.getElementById("folio").textContent = v?.["No Venta"] || no_venta;
-          document.getElementById("fecha").textContent = v?.["Fecha"] || "";
-          // Datos cliente
-          document.getElementById("cliente").textContent = v?.["NombreCliente"] || "";
-          document.getElementById("rtncliente").textContent = v?.["RTN"] || "";
-          document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
-          document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
-          // Totales
-          document.getElementById("total").textContent = formatCurrency(v?.["Monto"] || 0);
-          document.getElementById("recibido").textContent = formatCurrency(v?.["Efectivo recibido"] || v?.["Abono"] || 0);
-          document.getElementById("cambio").textContent = formatCurrency(v?.["Cambio"] || 0);
-          document.getElementById("saldo").textContent = formatCurrency(v?.["Saldo"] || 0);
-          // Renderiza productos
-          var productTable = document.getElementById("productTable");
-          productTable.innerHTML = "";
-          productos.forEach(function(p) {
-            let descripcion = p?.["Descripcion"] || p?.["Producto"] || "";
-            let cantidad = formatCurrency(p?.["Cantidad"] || 0);
-            let precio = formatCurrency(p?.["Precio"] || 0);
-            let descprod = formatCurrency(p?.["Descuento Lps"] || p?.["Descuento %"] || 0);
-            let isv = formatCurrency(p?.["Isv"] || p?.["Impuesto"] || 0);
-            let monto = formatCurrency(p?.["Monto"] || 0);
-            // Fila de descripción
-            var descriptionRow = productTable.insertRow();
-            descriptionRow.innerHTML = `<td colspan="5" class="descriptions">${descripcion}</td>`;
-            // Fila de datos
-            var detailsRow = productTable.insertRow();
-            detailsRow.innerHTML = `
-              <td class="qty">${cantidad}</td>
-              <td class="Price">${precio}</td>
-              <td class="Desc">${descprod}</td>
-              <td class="Isv">${isv}</td>
-              <td class="Amount">${monto}</td>
-            `;
-            detailsRow.className = "listitem";
-          });
-          let totalMonto = v?.["Monto"] || 0;
-          document.getElementById("montoLetras").textContent = "SON " + montoALetras(totalMonto);
-        } catch(e) {
-          debug += "ERROR: " + e + "\n";
-        }
-        document.getElementById("debug").textContent = debug;
-        //setTimeout(()=>window.print(), 500);
+        const no_venta = String(getParam("no_venta")).trim();
+        let ventas = await getSheetJson(VENTAS_ID);
+        let ventaDetalles = await getSheetJson(VENTA_ID);
+        // Compara SIEMPRE como string
+        let v = ventas.find(row => String(row["No Venta"]).trim() === no_venta);
+        let productos = ventaDetalles.filter(row => String(row["No Venta"]).trim() === no_venta);
+        document.getElementById("tipodoc").textContent = v?.["Tipo"] || "VENTA";
+        document.getElementById("folio").textContent = v?.["No Venta"] || no_venta;
+        document.getElementById("fecha").textContent = v?.["Fecha"] || "";
+        document.getElementById("cliente").textContent = v?.["NombreCliente"] || "";
+        document.getElementById("rtncliente").textContent = v?.["RTN"] || "";
+        document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
+        document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
+        document.getElementById("total").textContent = formatCurrency(v?.["Monto"] || 0);
+        document.getElementById("recibido").textContent = formatCurrency(v?.["Efectivo recibido"] || v?.["Abono"] || 0);
+        document.getElementById("cambio").textContent = formatCurrency(v?.["Cambio"] || 0);
+        document.getElementById("saldo").textContent = formatCurrency(v?.["Saldo"] || 0);
+        var productTable = document.getElementById("productTable");
+        productTable.innerHTML = "";
+        productos.forEach(function(p) {
+          let descripcion = p?.["Descripcion"] || p?.["Producto"] || "";
+          let cantidad = formatCurrency(p?.["Cantidad"] || 0);
+          let precio = formatCurrency(p?.["Precio"] || 0);
+          let descprod = formatCurrency(p?.["Descuento Lps"] || p?.["Descuento %"] || 0);
+          let isv = formatCurrency(p?.["Isv"] || p?.["Impuesto"] || 0);
+          let monto = formatCurrency(p?.["Monto"] || 0);
+          var descriptionRow = productTable.insertRow();
+          descriptionRow.innerHTML = `<td colspan="5" class="descriptions">${descripcion}</td>`;
+          var detailsRow = productTable.insertRow();
+          detailsRow.innerHTML = `
+            <td class="qty">${cantidad}</td>
+            <td class="Price">${precio}</td>
+            <td class="Desc">${descprod}</td>
+            <td class="Isv">${isv}</td>
+            <td class="Amount">${monto}</td>
+          `;
+          detailsRow.className = "listitem";
+        });
+        let totalMonto = v?.["Monto"] || 0;
+        document.getElementById("montoLetras").textContent = "SON " + montoALetras(totalMonto);
+        setTimeout(()=>window.print(), 500);
       }
       window.onload = main;
     </script>
