@@ -79,9 +79,8 @@
       <div align="center">--------------------------------------------------------</div>
     </div>
     <script>
-      // URLs para consulta por nombre de hoja
       var opensheetUrlVentas = "https://opensheet.elk.sh/1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs/Ventas";
-      var opensheetUrlVenta = "https://opensheet.elk.sh/1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs/Venta";
+      var opensheetUrlVenta = "1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs/Venta";
 
       function getQueryParam(param) {
         var urlParams = new URLSearchParams(window.location.search);
@@ -138,6 +137,20 @@
         return resultado.trim();
       }
 
+      // Devuelve el porcentaje de ISV como número
+      function parseIsv(isv) {
+        if (!isv) return 0;
+        let v = String(isv).toUpperCase().trim();
+        if (v === "0" || v === "EXENTO" || v === "NO" || v === "") return 0;
+        if (v === "0.15" || v === "15%" || v === "15") return 0.15;
+        if (v === "0.18" || v === "18%" || v === "18") return 0.18;
+        let num = parseFloat(v.replace("%", ""));
+        if (num === 15) return 0.15;
+        if (num === 18) return 0.18;
+        if (num === 0.15 || num === 0.18) return num;
+        return 0;
+      }
+
       async function main() {
         var no_venta = String(getQueryParam("no_venta")).trim();
         let ventas = [];
@@ -150,21 +163,22 @@
         } catch(e) { ventaDetalles = []; }
 
         let v = ventas.find(row => String(row["No Venta"]).trim() === no_venta);
-        let productos = ventaDetalles.filter(row => String(row["No Venta"]).trim() === no_venta);
+        // Solo líneas activas
+        let productos = ventaDetalles.filter(row =>
+          String(row["No Venta"]).trim() === no_venta &&
+          String(row["Estado"]).trim().toUpperCase() === "ACTIVO"
+        );
 
         // Folio
         document.getElementById("folio").textContent = v?.["Fila"] || "";
-        // Fecha
         document.getElementById("fecha").textContent = v?.["Fecha"] || "";
-        // Tipo de documento
         document.getElementById("tipodoc").textContent = v?.["Tipo"] || "VENTA";
-        // Cliente
         document.getElementById("cliente").textContent = v?.["NombreCliente"] || "";
         document.getElementById("rtncliente").textContent = v?.["RTN"] || "";
         document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
         document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
 
-        // Calcula el total de la venta sumando los montos
+        // Calcula el total de la venta sumando los montos de líneas activas
         let totalVenta = productos.reduce((sum, prod) =>
           sum + (parseFloat(prod["Monto"]) || 0), 0);
 
@@ -201,7 +215,6 @@
           if (cambio < 0) cambio = 0;
         }
 
-        // Mostrar totales
         document.getElementById("total").textContent = formatCurrency(totalVenta);
         document.getElementById("recibido").textContent = formatCurrency(pagoRecibido);
         document.getElementById("cambio").textContent = cambio > 0 ? formatCurrency(cambio) : "0.00";
@@ -215,13 +228,19 @@
           let cantidad = parseFloat(p?.["Cantidad"] || 0);
           let precio = parseFloat(p?.["Precio"] || 0);
 
-          // Descuento total por línea (ya multiplicado por cantidad)
-          let descuentoTotal = parseFloat(p?.["Descuento Lps"] || p?.["Descuento %"] || 0);
+          // Descuento total por línea (Descuento Lps × Cantidad)
+          let descuentoUnitario = parseFloat(p?.["Descuento Lps"] || 0);
+          let descuentoTotal = descuentoUnitario * cantidad;
 
-          // Impuesto total por línea (ISV % * Monto)
-          let isvPorc = parseFloat(p?.["Isv"] || 0); // Ejemplo: 0.15
+          // ISV por línea
+          let isvPorc = parseIsv(p?.["Isv"]);
+          let baseImponible = precio;
+          if (isvPorc === 0.15) baseImponible = precio / 1.15;
+          else if (isvPorc === 0.18) baseImponible = precio / 1.18;
+          let impuestoUnitario = baseImponible * isvPorc;
+          let impuestoTotal = impuestoUnitario * cantidad;
+
           let montoLinea = parseFloat(p?.["Monto"] || 0);
-          let impuestoTotal = isvPorc > 0 ? montoLinea * isvPorc / (1 + isvPorc) : 0;
 
           var descriptionRow = productTable.insertRow();
           descriptionRow.innerHTML = `<td colspan="5" class="descriptions">${descripcion}</td>`;
