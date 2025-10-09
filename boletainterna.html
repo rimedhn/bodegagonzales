@@ -80,7 +80,7 @@
     </div>
     <script>
       var opensheetUrlVentas = "https://opensheet.elk.sh/1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs/Ventas";
-      var opensheetUrlVenta = "1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs/Venta";
+      var opensheetUrlVenta = "https://opensheet.elk.sh/1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs/Venta";
 
       function getQueryParam(param) {
         var urlParams = new URLSearchParams(window.location.search);
@@ -136,8 +136,6 @@
         }
         return resultado.trim();
       }
-
-      // Devuelve el porcentaje de ISV como número
       function parseIsv(isv) {
         if (!isv) return 0;
         let v = String(isv).toUpperCase().trim();
@@ -149,6 +147,12 @@
         if (num === 18) return 0.18;
         if (num === 0.15 || num === 0.18) return num;
         return 0;
+      }
+      // Devuelve true si la línea está activa (o si no tiene campo Estado)
+      function isLineaActiva(row) {
+        if (!("Estado" in row)) return true;
+        let estado = String(row["Estado"] || "").trim().toUpperCase();
+        return estado === "ACTIVO";
       }
 
       async function main() {
@@ -163,13 +167,12 @@
         } catch(e) { ventaDetalles = []; }
 
         let v = ventas.find(row => String(row["No Venta"]).trim() === no_venta);
-        // Solo líneas activas
+
+        // Solo líneas activas o si no tiene campo Estado
         let productos = ventaDetalles.filter(row =>
-          String(row["No Venta"]).trim() === no_venta &&
-          String(row["Estado"]).trim().toUpperCase() === "ACTIVO"
+          String(row["No Venta"]).trim() === no_venta && isLineaActiva(row)
         );
 
-        // Folio
         document.getElementById("folio").textContent = v?.["Fila"] || "";
         document.getElementById("fecha").textContent = v?.["Fecha"] || "";
         document.getElementById("tipodoc").textContent = v?.["Tipo"] || "VENTA";
@@ -178,27 +181,19 @@
         document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
         document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
 
-        // Calcula el total de la venta sumando los montos de líneas activas
         let totalVenta = productos.reduce((sum, prod) =>
           sum + (parseFloat(prod["Monto"]) || 0), 0);
 
-        // Pago recibido
         let pagoRecibido = parseFloat(v?.["Efectivo recibido"] || 0);
-
-        // Forma de pago
         let formaPago = (v?.["Forma de pago"] || "").trim();
-
-        // Tasa e interés y plazo
         let tasa = parseFloat(v?.["Tasa"] || 0);
         let plazo = parseFloat(v?.["Plazo"] || 0);
 
-        // Interés
         let interes = 0;
         if (formaPago.toLowerCase() === "credito") {
           interes = (totalVenta - pagoRecibido) * tasa * plazo;
         }
 
-        // Saldo
         let saldo = 0;
         if (pagoRecibido >= totalVenta) {
           saldo = 0;
@@ -208,7 +203,6 @@
           saldo = totalVenta - pagoRecibido;
         }
 
-        // Cambio (solo si es contado y positivo)
         let cambio = 0;
         if (formaPago.toLowerCase() === "contado") {
           cambio = pagoRecibido - totalVenta;
@@ -220,7 +214,6 @@
         document.getElementById("cambio").textContent = cambio > 0 ? formatCurrency(cambio) : "0.00";
         document.getElementById("saldo").textContent = formatCurrency(saldo);
 
-        // Renderiza productos con descuento total e impuesto total
         var productTable = document.getElementById("productTable");
         productTable.innerHTML = "";
         productos.forEach(function(p) {
@@ -228,11 +221,9 @@
           let cantidad = parseFloat(p?.["Cantidad"] || 0);
           let precio = parseFloat(p?.["Precio"] || 0);
 
-          // Descuento total por línea (Descuento Lps × Cantidad)
           let descuentoUnitario = parseFloat(p?.["Descuento Lps"] || 0);
           let descuentoTotal = descuentoUnitario * cantidad;
 
-          // ISV por línea
           let isvPorc = parseIsv(p?.["Isv"]);
           let baseImponible = precio;
           if (isvPorc === 0.15) baseImponible = precio / 1.15;
