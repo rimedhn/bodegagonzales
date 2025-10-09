@@ -79,20 +79,33 @@
       <div align="center">--------------------------------------------------------</div>
     </div>
     <script>
+      // CONFIGURA AQUÍ LOS IDs Y NOMBRE DE HOJA EXACTOS
       const VENTAS_ID = "1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs";
-      const VENTA_ID = "1q9z92BMUAxjsiO5AnACeur6wJhVpfIUkqT62erIUUOA";
-      const SHEETS_BASE = "https://docs.google.com/spreadsheets/d/";
+      const VENTA_ID = "1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs";
+      const VENTAS_SHEET_NAME = "Ventas";
+      const VENTA_SHEET_NAME = "Venta";
 
-      function getParam(name) {
-        const params = new URLSearchParams(location.search);
-        return params.get(name) || "";
+      // Obtiene el gid de una hoja por nombre usando la metadata de Google Sheets
+      async function getGidBySheetName(sheetId, sheetName) {
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+        const res = await fetch(url);
+        const text = await res.text();
+        // Encuentra el array de hojas en el texto
+        const match = text.match(/"sheets":\s*\[(.*?)\]/s);
+        if (!match) return "0";
+        const sheetsArr = JSON.parse("[" + match[1].replace(/([{,])(\w+):/g, '$1"$2":') + "]");
+        for (const sheet of sheetsArr) {
+          if (sheet.properties && sheet.properties.title === sheetName) {
+            return String(sheet.properties.sheetId);
+          }
+        }
+        // Si no encuentra, regresa la hoja 0
+        return "0";
       }
-      function formatCurrency(num) {
-        num = parseFloat(num || 0);
-        return num.toLocaleString('es-HN', {minimumFractionDigits:2, maximumFractionDigits:2});
-      }
-      async function getSheetJson(sheetId, gid = 0) {
-        const url = `${SHEETS_BASE}${sheetId}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
+
+      // Obtiene los datos de la hoja por gid
+      async function getSheetJson(sheetId, gid) {
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
         const res = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text.match(/(?<=setResponse\().*(?=\);)/)[0]);
@@ -102,6 +115,15 @@
           r.c.forEach((v, i) => obj[cols[i]] = v ? v.v : "");
           return obj;
         });
+      }
+
+      function getParam(name) {
+        const params = new URLSearchParams(location.search);
+        return params.get(name) || "";
+      }
+      function formatCurrency(num) {
+        num = parseFloat(num || 0);
+        return num.toLocaleString('es-HN', {minimumFractionDigits:2, maximumFractionDigits:2});
       }
       function montoALetras(monto) {
         monto = parseFloat(monto || 0);
@@ -149,13 +171,26 @@
         }
         return resultado.trim();
       }
+
       async function main() {
         const no_venta = String(getParam("no_venta")).trim();
-        let ventas = await getSheetJson(VENTAS_ID);
-        let ventaDetalles = await getSheetJson(VENTA_ID);
-        // Compara SIEMPRE como string
+        // Obtiene el gid por nombre de hoja
+        let ventas_gid = await getGidBySheetName(VENTAS_ID, VENTAS_SHEET_NAME);
+        let venta_gid = await getGidBySheetName(VENTA_ID, VENTA_SHEET_NAME);
+
+        let ventas = [];
+        let ventaDetalles = [];
+        try {
+          ventas = await getSheetJson(VENTAS_ID, ventas_gid);
+        } catch(e) { ventas = []; }
+        try {
+          ventaDetalles = await getSheetJson(VENTA_ID, venta_gid);
+        } catch(e) { ventaDetalles = []; }
+
+        // Filtra por No Venta, comparando como string siempre
         let v = ventas.find(row => String(row["No Venta"]).trim() === no_venta);
         let productos = ventaDetalles.filter(row => String(row["No Venta"]).trim() === no_venta);
+
         document.getElementById("tipodoc").textContent = v?.["Tipo"] || "VENTA";
         document.getElementById("folio").textContent = v?.["No Venta"] || no_venta;
         document.getElementById("fecha").textContent = v?.["Fecha"] || "";
@@ -167,6 +202,7 @@
         document.getElementById("recibido").textContent = formatCurrency(v?.["Efectivo recibido"] || v?.["Abono"] || 0);
         document.getElementById("cambio").textContent = formatCurrency(v?.["Cambio"] || 0);
         document.getElementById("saldo").textContent = formatCurrency(v?.["Saldo"] || 0);
+
         var productTable = document.getElementById("productTable");
         productTable.innerHTML = "";
         productos.forEach(function(p) {
