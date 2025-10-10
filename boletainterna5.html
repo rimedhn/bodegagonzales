@@ -80,7 +80,7 @@
     </div>
     <script>
       var opensheetUrlVentas = "https://opensheet.elk.sh/1IuaBvN--rdRk7vgKLv-x6sQpbko4jjygbTtq57jbohs/Ventas";
-      var opensheetUrlVenta = "https://opensheet.elk.sh/1Jmr7ho8QtjYYvzyYJJX1rMw1P2xXXcmp9ti-iSuAgHI/Venta";
+      var opensheetUrlVenta = "https://opensheet.elk.sh/1q9z92BMUAxjsiO5AnACeur6wJhVpfIUkqT62erIUUOA/Venta";
 
       function getQueryParam(param) {
         var urlParams = new URLSearchParams(window.location.search);
@@ -90,8 +90,12 @@
         num = parseFloat(num || 0);
         return num.toLocaleString('es-HN', {minimumFractionDigits:2, maximumFractionDigits:2});
       }
+      function round2(num) {
+        // Redondea a dos decimales (solo para totales finales)
+        return Math.round((parseFloat(num || 0) + Number.EPSILON) * 100) / 100;
+      }
       function montoALetras(monto) {
-        monto = parseFloat(monto || 0);
+        monto = round2(monto || 0);
         const entero = Math.floor(monto);
         let decimales = Math.round((monto - entero) * 100);
         decimales = decimales < 10 ? "0" + decimales : decimales;
@@ -148,7 +152,6 @@
         if (num === 0.15 || num === 0.18) return num;
         return 0;
       }
-      // Devuelve true si la línea está activa (o si no tiene campo Estado)
       function isLineaActiva(row) {
         if (!("Estado" in row)) return true;
         let estado = String(row["Estado"] || "").trim().toUpperCase();
@@ -181,13 +184,10 @@
         document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
         document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
 
+        // Solo redondea los totales del final
         let totalVenta = productos.reduce((sum, prod) =>
           sum + (parseFloat(prod["Monto"]) || 0), 0);
-        totalVenta = round2(totalVenta);
-
         let pagoRecibido = parseFloat(v?.["Efectivo recibido"] || 0);
-        pagoRecibido = round2(pagoRecibido);
-        
         let formaPago = (v?.["Forma de pago"] || "").trim();
         let tasa = parseFloat(v?.["Tasa"] || 0);
         let plazo = parseFloat(v?.["Plazo"] || 0);
@@ -196,7 +196,6 @@
         if (formaPago.toLowerCase() === "credito") {
           interes = (totalVenta - pagoRecibido) * tasa * plazo;
         }
-        interes = round2(interes);
 
         let saldo = 0;
         if (pagoRecibido >= totalVenta) {
@@ -206,13 +205,18 @@
         } else {
           saldo = totalVenta - pagoRecibido;
         }
-        saldo = round2(saldo);
 
         let cambio = 0;
         if (formaPago.toLowerCase() === "contado") {
           cambio = pagoRecibido - totalVenta;
           if (cambio < 0) cambio = 0;
         }
+
+        // REDONDEO SOLO EN LOS TOTALES
+        totalVenta = round2(totalVenta);
+        pagoRecibido = round2(pagoRecibido);
+        interes = round2(interes);
+        saldo = round2(saldo);
         cambio = round2(cambio);
 
         document.getElementById("total").textContent = formatCurrency(totalVenta);
