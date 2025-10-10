@@ -90,15 +90,15 @@
         num = parseFloat(num || 0);
         return num.toLocaleString('es-HN', {minimumFractionDigits:2, maximumFractionDigits:2});
       }
-      function round2(num) {
-        return Math.round((parseFloat(num || 0) + Number.EPSILON) * 100) / 100;
+      function round0(num) {
+        return Math.round(parseFloat(num || 0));
+      }
+      function formatCurrencyInt(num) {
+        return round0(num).toLocaleString('es-HN', {minimumFractionDigits:0, maximumFractionDigits:0});
       }
       function montoALetras(monto) {
-        monto = round2(monto || 0);
-        const entero = Math.floor(monto);
-        let decimales = Math.round((monto - entero) * 100);
-        decimales = decimales < 10 ? "0" + decimales : decimales;
-        return numALetras(entero) + " LEMPIRAS CON " + decimales + "/100";
+        monto = round0(monto || 0);
+        return numALetras(monto) + " LEMPIRAS";
       }
       function numALetras(num) {
         if (isNaN(num) || num === 0) return "CERO";
@@ -182,39 +182,39 @@
         document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
         document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
 
-        // SOLO REDONDEA LOS TOTALES FINALES
-        let totalVenta = round2(productos.reduce((sum, prod) =>
+        // SOLO REDONDEA LOS TOTALES FINALES A ENTEROS
+        let totalVenta = round0(productos.reduce((sum, prod) =>
           sum + (parseFloat(prod["Monto"]) || 0), 0));
 
-        let pagoRecibido = round2(parseFloat(v?.["Efectivo recibido"] || 0));
+        let pagoRecibido = round0(parseFloat(v?.["Efectivo recibido"] || 0));
         let formaPago = (v?.["Forma de pago"] || "").trim();
         let tasa = parseFloat(v?.["Tasa"] || 0);
         let plazo = parseFloat(v?.["Plazo"] || 0);
 
         let interes = 0;
         if (formaPago.toLowerCase() === "credito") {
-          interes = round2((totalVenta - pagoRecibido) * tasa * plazo);
+          interes = round0((totalVenta - pagoRecibido) * tasa * plazo);
         }
 
         let saldo = 0;
         if (pagoRecibido >= totalVenta) {
           saldo = 0;
         } else if (formaPago.toLowerCase() === "credito") {
-          saldo = round2((totalVenta - pagoRecibido) + interes);
+          saldo = round0((totalVenta - pagoRecibido) + interes);
         } else {
-          saldo = round2(totalVenta - pagoRecibido);
+          saldo = round0(totalVenta - pagoRecibido);
         }
 
         let cambio = 0;
         if (formaPago.toLowerCase() === "contado") {
-          cambio = round2(pagoRecibido - totalVenta);
+          cambio = round0(pagoRecibido - totalVenta);
           if (cambio < 0) cambio = 0;
         }
 
-        document.getElementById("total").textContent = formatCurrency(totalVenta);
-        document.getElementById("recibido").textContent = formatCurrency(pagoRecibido);
-        document.getElementById("cambio").textContent = cambio > 0 ? formatCurrency(cambio) : "0.00";
-        document.getElementById("saldo").textContent = formatCurrency(saldo);
+        document.getElementById("total").textContent = formatCurrencyInt(totalVenta);
+        document.getElementById("recibido").textContent = formatCurrencyInt(pagoRecibido);
+        document.getElementById("cambio").textContent = cambio > 0 ? formatCurrencyInt(cambio) : "0";
+        document.getElementById("saldo").textContent = formatCurrencyInt(saldo);
 
         var productTable = document.getElementById("productTable");
         productTable.innerHTML = "";
