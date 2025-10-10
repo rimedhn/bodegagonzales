@@ -91,7 +91,6 @@
         return num.toLocaleString('es-HN', {minimumFractionDigits:2, maximumFractionDigits:2});
       }
       function round2(num) {
-        // Redondea a dos decimales (solo para totales finales)
         return Math.round((parseFloat(num || 0) + Number.EPSILON) * 100) / 100;
       }
       function montoALetras(monto) {
@@ -184,7 +183,7 @@
         document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
         document.getElementById("telefonocliente").textContent = v?.["TelefonoCliente"] || "";
 
-        // Solo redondea los totales del final
+        // Cálculo de totales finales (redondeados)
         let totalVenta = productos.reduce((sum, prod) =>
           sum + (parseFloat(prod["Monto"]) || 0), 0);
         let pagoRecibido = parseFloat(v?.["Efectivo recibido"] || 0);
@@ -212,17 +211,11 @@
           if (cambio < 0) cambio = 0;
         }
 
-        // REDONDEO SOLO EN LOS TOTALES
-        totalVenta = round2(totalVenta);
-        pagoRecibido = round2(pagoRecibido);
-        interes = round2(interes);
-        saldo = round2(saldo);
-        cambio = round2(cambio);
-
-        document.getElementById("total").textContent = formatCurrency(totalVenta);
-        document.getElementById("recibido").textContent = formatCurrency(pagoRecibido);
-        document.getElementById("cambio").textContent = cambio > 0 ? formatCurrency(cambio) : "0.00";
-        document.getElementById("saldo").textContent = formatCurrency(saldo);
+        // REDONDEO SOLO EN LOS TOTALES FINALES
+        document.getElementById("total").textContent = formatCurrency(round2(totalVenta));
+        document.getElementById("recibido").textContent = formatCurrency(round2(pagoRecibido));
+        document.getElementById("cambio").textContent = cambio > 0 ? formatCurrency(round2(cambio)) : "0.00";
+        document.getElementById("saldo").textContent = formatCurrency(round2(saldo));
 
         var productTable = document.getElementById("productTable");
         productTable.innerHTML = "";
