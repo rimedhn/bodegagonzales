@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=80mm, initial-scale=1.0" />
-    <title>BOLETA DE VENTA</title>
+    <title>FACTURA</title>
     <style>
       @media print {
         body {
@@ -252,7 +252,7 @@
       </table>
 
       <div class="separator"></div>
-      <div align="center">Detalle</div>
+      <div align="center">Detalle de la venta</div>
       <div class="separator"></div>
 
       <!-- Encabezados: Cant, Descripción, Precio, Monto (sin negrita) -->
@@ -440,7 +440,7 @@
 
         document.getElementById("folio").textContent = v?.["Fila"] || "";
         document.getElementById("fecha").textContent = v?.["Fecha hora"] || "";
-        document.getElementById("tipodoc").textContent = "VENTA";
+        document.getElementById("tipodoc").textContent = "FACTURA";
         document.getElementById("cliente").textContent = v?.["NombreCliente"] || "";
         document.getElementById("rtncliente").textContent = v?.["RTN"] || "";
         document.getElementById("direccioncliente").textContent = v?.["DireccionCliente"] || "";
