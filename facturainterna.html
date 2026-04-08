@@ -438,7 +438,7 @@
           (row) => String(row["No Venta"]).trim() === no_venta && isLineaActiva(row)
         );
 
-        document.getElementById("folio").textContent = v?.["Fila"] || "";
+        document.getElementById("folio").textContent = v?.["Folio 1"] || "";
         document.getElementById("fecha").textContent = v?.["Fecha hora"] || "";
         document.getElementById("tipodoc").textContent = "FACTURA";
         document.getElementById("cliente").textContent = v?.["NombreCliente"] || "";
